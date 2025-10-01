@@ -1,0 +1,27 @@
+/* Set the body background */
+body {
+   
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Center the game canvas inside the container */
+.game-container { 
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Add a simple border and background color */
+#game {
+    border: 2px solid #db2a2a;
+    background-color: #c992a1; 
+    background: url(flappybirdbg.png) no-repeat center;
+    background-size: cover;
+}
+
