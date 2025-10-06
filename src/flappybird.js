@@ -29,13 +29,13 @@ window.onload = function () {
 
   // Load images
   birdImg = new Image();
-  birdImg.src = "src/flappybird.png";
+  birdImg.src = "flappybird.png";
 
   topPipeImg = new Image();
-  topPipeImg.src = "src/toppipe.png";
+  topPipeImg.src = "toppipe.png";
 
   bottomPipeImg = new Image();
-  bottomPipeImg.src = "src/bottompipe.png";
+  bottomPipeImg.src = "bottompipe.png";
 
   // When all are loaded, draw
   bottomPipeImg.onload = function () {
