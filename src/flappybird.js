@@ -1,4 +1,4 @@
-// Board setup
+// Board Setup
 let board;
 let boardWidth = 360;
 let boardHeight = 640;
