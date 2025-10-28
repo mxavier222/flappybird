@@ -11,6 +11,11 @@ let birdX = boardWidth / 8; // slightly left
 let birdY = boardHeight / 2 - birdHeight / 2;
 let birdImg;
 
+// Bird physics
+let velocityY = 0;
+let gravity = 0.4;
+let jumpStrength = -8;
+
 // Pipe setup
 let pipeWidth = 64;
 let pipeHeight = 512;
@@ -37,26 +42,57 @@ window.onload = function () {
   bottomPipeImg = new Image();
   bottomPipeImg.src = "bottompipe.png";
 
-  // When all are loaded, draw
+  // When bottom pipe image loads, start game
   bottomPipeImg.onload = function () {
-    drawScene();
+    requestAnimationFrame(update);
   };
+
+  // Listen for spacebar to make bird jump
+  document.addEventListener("keydown", moveBird);
 };
 
-function drawScene() {
-  context.clearRect(0, 0, boardWidth, boardHeight);
-
-  // Draw bird
+// Draw the bird
+function drawBird() {
   context.drawImage(birdImg, birdX, birdY, birdWidth, birdHeight);
+}
 
-  // Center the pipe pair vertically
-  let centerY = boardHeight / 2; // from top
+// Draw the pipes
+function drawPipes() {
+  let centerY = boardHeight / 2;
   let topPipeY = centerY - pipeHeight - gap / 2;
-  let bottomPipeY = centerY + gap / 2; //  just below center
+  let bottomPipeY = centerY + gap / 2;
 
-  // Draw top pipe
   context.drawImage(topPipeImg, pipeX, topPipeY, pipeWidth, pipeHeight);
-
-  // Draw bottom pipe
   context.drawImage(bottomPipeImg, pipeX, bottomPipeY, pipeWidth, pipeHeight);
+}
+
+// Main game loop
+function update() {
+  // Keeps the game updating
+  requestAnimationFrame(update);
+  console.log("Game updating...");
+
+  // Clear canvas
+  context.clearRect(0, 0, board.width, board.height);
+
+  // Apply gravity
+  velocityY += gravity;
+  birdY += velocityY;
+
+  // Prevent bird from falling below the canvas
+  if (birdY + birdHeight > boardHeight) {
+    birdY = boardHeight - birdHeight;
+    velocityY = 0;
+  }
+
+  // Draw updated scene
+  drawPipes();
+  drawBird();
+}
+
+// Make the bird jump
+function moveBird(e) {
+  if (e.code === "Space") {
+    velocityY = jumpStrength; // Move bird up
+  }
 }
