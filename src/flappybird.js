@@ -1,98 +1,107 @@
-// Board Setup
+// Board setup
 let board;
 let boardWidth = 360;
 let boardHeight = 640;
 let context;
 
 // Bird setup
-let birdWidth = 34; // 17:12 ratio
+let birdWidth = 34;
 let birdHeight = 24;
-let birdX = boardWidth / 8; // slightly left
-let birdY = boardHeight / 2 - birdHeight / 2;
+let birdX = boardWidth / 8;
+let birdY = boardHeight / 2;
 let birdImg;
 
-// Bird physics
-let velocityY = 0;
-let gravity = 0.4;
-let jumpStrength = -8;
+// Physics variables
+let velocityY = 0; // Bird’s vertical speed
+let gravity = 0.4; 
+let jumpStrength = -8; 
 
-// Pipe setup
-let pipeWidth = 64;
-let pipeHeight = 512;
-let pipeX = boardWidth / 2 - pipeWidth / 2; // Center pipes horizontally
-let pipeY = 0;
-let topPipeImg;
-let bottomPipeImg;
-let gap = 150; // space between pipes
+// Game state
+let gameState = "RUNNING"; // or "GAME_OVER"
 
+// Load game
 window.onload = function () {
-  // Setup canvas
   board = document.getElementById("board");
-  board.width = boardWidth;
   board.height = boardHeight;
+  board.width = boardWidth;
   context = board.getContext("2d");
 
-  // Load images
+  // Load bird image
   birdImg = new Image();
-  birdImg.src = "flappybird.png";
-
-  topPipeImg = new Image();
-  topPipeImg.src = "toppipe.png";
-
-  bottomPipeImg = new Image();
-  bottomPipeImg.src = "bottompipe.png";
-
-  // When bottom pipe image loads, start game
-  bottomPipeImg.onload = function () {
+  birdImg.src = "./flappybird.png";
+  birdImg.onload = function () {
     requestAnimationFrame(update);
   };
 
-  // Listen for spacebar to make bird jump
-  document.addEventListener("keydown", moveBird);
+  // Input listeners
+  document.addEventListener("keydown", handleInput);
+  document.addEventListener("click", handleInput);
 };
 
-// Draw the bird
+// Update loop
+function update() {
+  requestAnimationFrame(update);
+  context.clearRect(0, 0, board.width, board.height);
+
+  if (gameState === "RUNNING") {
+    // Apply gravity
+    velocityY += gravity;
+    birdY += velocityY;
+
+    // Collision detection with top/bottom of canvas
+    if (birdY + birdHeight >= boardHeight) {
+      birdY = boardHeight - birdHeight;
+      gameOver();
+    } else if (birdY <= 0) {
+      birdY = 0;
+      gameOver();
+    }
+  }
+
+  drawBird();
+
+  if (gameState === "GAME_OVER") {
+    drawGameOver();
+  }
+}
+
+// Draw bird
 function drawBird() {
   context.drawImage(birdImg, birdX, birdY, birdWidth, birdHeight);
 }
 
-// Draw the pipes
-function drawPipes() {
-  let centerY = boardHeight / 2;
-  let topPipeY = centerY - pipeHeight - gap / 2;
-  let bottomPipeY = centerY + gap / 2;
-
-  context.drawImage(topPipeImg, pipeX, topPipeY, pipeWidth, pipeHeight);
-  context.drawImage(bottomPipeImg, pipeX, bottomPipeY, pipeWidth, pipeHeight);
+// Handle input for jump/restart
+function handleInput(e) {
+  if (gameState === "RUNNING") {
+    if (e.code === "Space" || e.type === "click") {
+      velocityY = jumpStrength; // Jump/flap
+    }
+  } else if (gameState === "GAME_OVER") {
+    if (e.code === "KeyR" || e.type === "click") {
+      restartGame();
+    }
+  }
 }
 
-// Main game loop
-function update() {
-  // Keeps the game updating
-  requestAnimationFrame(update);
-  console.log("Game updating...");
-
-  // Clear canvas
-  context.clearRect(0, 0, board.width, board.height);
-
-  // Apply gravity
-  velocityY += gravity;
-  birdY += velocityY;
-
-  // Prevent bird from falling below the canvas
-  if (birdY + birdHeight > boardHeight) {
-    birdY = boardHeight - birdHeight;
-    velocityY = 0;
-  }
-
-  // Draw updated scene
-  drawPipes();
-  drawBird();
+// End game
+function gameOver() {
+  gameState = "GAME_OVER";
+  velocityY = 0;
 }
 
-// Make the bird jump
-function moveBird(e) {
-  if (e.code === "Space") {
-    velocityY = jumpStrength; // Move bird up
-  }
+// Restart game
+function restartGame() {
+  birdY = boardHeight / 2;
+  velocityY = 0;
+  gameState = "RUNNING";
+}
+
+// Display Game Over message
+function drawGameOver() {
+  context.fillStyle = "red";
+  context.font = "28px Courier";
+  context.fillText("GAME OVER", 90, boardHeight / 2);
+  context.font = "18px Courier";
+  context.fillStyle = "black";
+  context.fillText("Press R or Click to Restart", 50, boardHeight / 2 + 40);
 }
