@@ -16,8 +16,7 @@ let velocityY = 0; // Bird’s vertical speed
 let gravity = 0.4; 
 let jumpStrength = -8; 
 
-// Game state
-let gameState = "RUNNING"; // or "GAME_OVER"
+let isRunning = true;
 
 // Load game
 window.onload = function () {
@@ -38,29 +37,22 @@ window.onload = function () {
   document.addEventListener("click", handleInput);
 };
 
-// Update loop
 function update() {
   requestAnimationFrame(update);
   context.clearRect(0, 0, board.width, board.height);
 
-  if (gameState === "RUNNING") {
-    // Apply gravity
+  if (isRunning) {
+    birdY = Math.min(Math.max(birdY + velocityY, 0), boardHeight - birdHeight);
     velocityY += gravity;
-    birdY += velocityY;
 
-    // Collision detection with top/bottom of canvas
-    if (birdY + birdHeight >= boardHeight) {
-      birdY = boardHeight - birdHeight;
-      gameOver();
-    } else if (birdY <= 0) {
-      birdY = 0;
+    if (birdY === boardHeight - birdHeight || birdY === 0) {
       gameOver();
     }
   }
 
   drawBird();
 
-  if (gameState === "GAME_OVER") {
+  if (!isRunning) {
     drawGameOver();
   }
 }
@@ -70,30 +62,29 @@ function drawBird() {
   context.drawImage(birdImg, birdX, birdY, birdWidth, birdHeight);
 }
 
-// Handle input for jump/restart
 function handleInput(e) {
-  if (gameState === "RUNNING") {
+  if (isRunning) {
+
     if (e.code === "Space" || e.type === "click") {
-      velocityY = jumpStrength; // Jump/flap
+      velocityY = jumpStrength; 
+
     }
-  } else if (gameState === "GAME_OVER") {
+  } else {
     if (e.code === "KeyR" || e.type === "click") {
       restartGame();
     }
   }
 }
 
-// End game
 function gameOver() {
-  gameState = "GAME_OVER";
+  isRunning = false;
   velocityY = 0;
 }
 
-// Restart game
 function restartGame() {
   birdY = boardHeight / 2;
   velocityY = 0;
-  gameState = "RUNNING";
+  isRunning = true;
 }
 
 // Display Game Over message
