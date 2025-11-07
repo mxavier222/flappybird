@@ -1,4 +1,4 @@
-* Pseudocode for Storing Pipes in an Array
+* Pseudocode for Storing Pipes in an Array 
 
     Create an empty array called pipes
 
