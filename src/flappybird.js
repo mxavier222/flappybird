@@ -88,11 +88,6 @@ function update() {
       }
     }
 
-    // Remove off-screen pipes
-    while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth) {
-      pipeArray.splice(0, 1);
-    }
-
     // Spawn new pipes every 90 frames
     if (frames % 90 === 0) {
       spawnPipe();
